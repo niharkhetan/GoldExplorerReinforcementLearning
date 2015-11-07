@@ -79,8 +79,6 @@ class Grid(object):
         return (i, j)
         
 if __name__ == '__main__':
-    for i in range(1,21):
-        grid = Grid(i)
-        print grid.getIndex()
+    pass
     
     
