@@ -35,6 +35,7 @@ class Grid(object):
         self.pDown = None
         self.isBlocked = isBlocked
         self.isGoal = False
+        self.value = 0
     
     def getPLeft(self):
         return self.pLeft

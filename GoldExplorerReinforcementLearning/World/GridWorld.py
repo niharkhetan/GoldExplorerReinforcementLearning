@@ -5,10 +5,6 @@ Created on Nov 3, 2015
 '''
 from Grid import Grid
 class GridWorld(object):
-    '''
-    classdocs
-    '''
-
 
     def __init__(self, listOfGrids):
         '''
@@ -40,6 +36,9 @@ class GridWorld(object):
     def getDownMovement(self):
         return self.movement['down']
     
+    def getMovement(self):
+        return self.movement
+    
     def getMovesPossible(self, grid):
         movesPossible = []
         # Moves are represented as (From, to)
@@ -54,6 +53,17 @@ class GridWorld(object):
                     movesPossible.append(gridToMoveTo)
         return movesPossible
     
+    def getMoveDirection(self, currentGrid, movedToGrid):
+        diff = currentGrid.getGridName() - movedToGrid.getGridName()
+        if diff == 1:
+            return 'left'
+        elif diff == -1:
+            return 'right'
+        elif diff == 4:
+            return 'down'
+        else:
+            return 'up'
+        
 if __name__ == '__main__':
     # Creating a sample world
     grid1 = Grid(1, -1)
