@@ -3,6 +3,7 @@ Created on Nov 3, 2015
 
 @author: NiharKhetan
 '''
+from codecs import getincrementaldecoder
 
 class Grid(object):
     '''
@@ -22,17 +23,18 @@ class Grid(object):
     '''
 
 
-    def __init__(self, Name, isBlocked = False):
+    def __init__(self, Name, gridReward, isBlocked = False):
         '''
         Constructor
         '''
         self.gridName = Name
-        self.gridReward = None
+        self.gridReward = gridReward
         self.pLeft = None
         self.pRight = None
         self.pUp = None
         self.pDown = None
         self.isBlocked = isBlocked
+        self.isGoal = False
     
     def getPLeft(self):
         return self.pLeft
@@ -61,12 +63,23 @@ class Grid(object):
     def getGridName(self):
         return self.gridName
     
+    def getIsGoal(self):
+        return self.isGoal
+    
+    def isBlocked(self):
+        return self.isBlocked
+    
+    def setIsGoal(self):
+        self.isGoal = True
+    
     def getIndex(self):
         i = (self.gridName -1) // 4
         j = (self.gridName -1) % 4
         return (i, j)
-    
+        
 if __name__ == '__main__':
     for i in range(1,21):
         grid = Grid(i)
         print grid.getIndex()
+    
+    
