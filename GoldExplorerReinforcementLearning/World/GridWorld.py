@@ -49,9 +49,44 @@ class GridWorld(object):
             x, y = move            
             if x < 5 and x >= 0 and y >=0 and y < 4 :
                 gridToMoveTo = self.grids[x][y]
-                if not gridToMoveTo.isBlocked:
+                if not gridToMoveTo.isBlocked():
                     movesPossible.append(gridToMoveTo)
         return movesPossible
+    
+    def getAllMovesFromCurGrid(self,grid):
+        movesPossible = []
+        # Moves are represented as (From, to)
+        i, j = grid.getIndex()
+        #Up, Down, Right, Left
+        movesPossibleToGrids = [(i+1,j), (i-1,j), (i,j+1), (i,j-1)]
+        for move in movesPossibleToGrids:
+            x, y = move            
+            if x < 5 and x >= 0 and y >=0 and y < 4 :
+                gridToMoveTo = self.grids[x][y]
+                if not gridToMoveTo.isBlocked():
+                    movesPossible.append(gridToMoveTo)
+        return movesPossible
+        
+    def getAllGridsReachableFromCurGrid(self,grid):
+        ''' getAllGridsReachableFromCurGrid '''
+        directions = {'up':{'x':1,'y':0},'down':{'x':-1,'y':0},'right':{'x':0,'y':1},'left':{'x':0,'y':-1}}
+        allReachableGrids = {}
+        i, j = grid.getIndex()
+        for dir,val in directions.iteritems():
+            newX =  i + val['x']
+            newY =  j + val['y']
+            if 0 <= newX < 5  and 0 <= newY < 4 :
+                gridToMoveTo = self.grids[newX][newY]
+                if not gridToMoveTo.isBlocked():
+                    allReachableGrids[dir] = gridToMoveTo
+                else:
+                    allReachableGrids[dir] = grid
+            else:
+                allReachableGrids[dir] = grid
+                    
+#         for dir,grid in allReachableGrids.iteritems():
+#             print dir, grid.getGridName()
+        return allReachableGrids
     
     def getMoveDirection(self, currentGrid, movedToGrid):
         diff = currentGrid.getGridName() - movedToGrid.getGridName()
@@ -63,6 +98,47 @@ class GridWorld(object):
             return 'down'
         else:
             return 'up'
+        
+    def printGridWorldValueMatrix(self):
+        ''' Print Grid World Value Matrix'''
+        print
+        print " "+"*"*97
+        print "\t\t\t\t\tGrid World Value Matrix"
+        print " "+"*"*97
+        for i in range(4, -1, -1): 
+            for j in range(0, 4):
+                padding = 16             
+                currState = self.grids[i][j]
+                signPlaceholder=''
+                if currState.value >= 0:
+                    signPlaceholder = ' '
+                    padding -=1
+                print "|\t"+signPlaceholder + str(currState.value) + " "*(padding - len(str(currState.value))),
+                if j==3:
+                    print "|",
+            print "\n ","-"*95   
+        print "\n"
+        
+    def printGridWorldRewardMatrix(self):
+        ''' Print Grid World Reward Matrix'''
+        print
+        print " "+"*"*65
+        print "\t\tGrid World Reward Matrix"
+        print " "+"*"*65
+
+        for i in range(4, -1, -1): 
+            for j in range(0, 4):
+                padding = 8
+                currState = self.grids[i][j]
+                signPlaceholder=''
+                if currState.gridReward >= 0:
+                    signPlaceholder = ' '
+                    padding -=1
+                print "|\t"+signPlaceholder + str(currState.gridReward) + " "*(padding - len(str(currState.gridReward))),
+                if j==3:
+                    print "|",
+            print "\n ","-"*63   
+        print "\n"
         
 if __name__ == '__main__':
     # Creating a sample world
@@ -86,16 +162,20 @@ if __name__ == '__main__':
     grid18 = Grid(18, -1)
     grid19 = Grid(19, -1)
     grid20 = Grid(20, 10)
-    grid20.setIsGoal()
+    grid20.setGoal()
     
     gWorld = GridWorld([[grid1,grid2,grid3,grid4],[grid5,grid6,grid7,grid8],[grid9,grid10,grid11,grid12],[grid13,grid14,grid15,grid16],[grid17,grid18,grid19,grid20]])
     gWorld.setMovement({"left":{"left":1}, "right":{"right":0.8, "down":0.2}, "up":{"up":0.8, "left":0.2}, "down":{"down":1}})
     
-    for i in range(0, 5): 
-        for j in range(0, 4):
-            grid = gWorld.getGrids()[i][j]
-            if not grid.isBlocked:
-                print str(grid.getGridName()) + " :: ",
-                for x in gWorld.getMovesPossible(grid):
-                    print str(x.getGridName()) + " ,",
-                print ""
+#     for i in range(0, 5): 
+#         for j in range(0, 4):
+#             grid = gWorld.getGrids()[i][j]
+#             if not grid.isBlocked():
+#                 print str(grid.getGridName()) + " :: ",
+#                 for x in gWorld.getMovesPossible(grid):
+#                     print str(x.getGridName()) + " ,",
+#                 print ""
+#                 
+    gWorld.getAllGridsReachableFromCurGrid(grid17)
+    gWorld.printGridWorldValueMatrix()
+    gWorld.printGridWorldRewardMatrix()

@@ -23,7 +23,7 @@ class Grid(object):
     '''
 
 
-    def __init__(self, Name, gridReward, isBlocked = False):
+    def __init__(self, Name, gridReward, isBlockedFlag = False):
         '''
         Constructor
         '''
@@ -33,8 +33,8 @@ class Grid(object):
         self.pRight = None
         self.pUp = None
         self.pDown = None
-        self.isBlocked = isBlocked
-        self.isGoal = False
+        self.isBlockedFlag = isBlockedFlag
+        self.isGoalFlag = False
         self.value = 0
     
     def getPLeft(self):
@@ -64,14 +64,14 @@ class Grid(object):
     def getGridName(self):
         return self.gridName
     
-    def getIsGoal(self):
-        return self.isGoal
+    def isGoal(self):
+        return self.isGoalFlag
     
     def isBlocked(self):
-        return self.isBlocked
+        return self.isBlockedFlag
     
-    def setIsGoal(self):
-        self.isGoal = True
+    def setGoal(self):
+        self.isGoalFlag = True
     
     def getIndex(self):
         i = (self.gridName -1) // 4
