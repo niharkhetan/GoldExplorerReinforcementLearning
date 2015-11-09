@@ -29,37 +29,37 @@ class Grid(object):
         '''
         self.gridName = Name
         self.gridReward = gridReward
-        self.pLeft = None
-        self.pRight = None
-        self.pUp = None
-        self.pDown = None
+        self.qLeft = 0
+        self.qRight = 0
+        self.qUp = 0
+        self.qDown = 0
         self.isBlockedFlag = isBlockedFlag
         self.isGoalFlag = False
         self.value = 0
     
-    def getPLeft(self):
-        return self.pLeft
+    def getQLeft(self):
+        return self.qLeft
     
-    def getPRight(self):
-        return self.pLeft
+    def getQRight(self):
+        return self.qLeft
     
-    def getPUp(self):
-        return self.pUp
+    def getQUp(self):
+        return self.qUp
     
-    def getPDown(self):
-        return self.pDown
+    def getQDown(self):
+        return self.qDown
     
-    def setPLeft(self, pLeft):
-        self.pLeft = pLeft
+    def setQLeft(self, qLeft):
+        self.qLeft = qLeft
         
-    def setPRight(self, pRight):
-        self.pRight = pRight
+    def setQRight(self, qRight):
+        self.qRight = qRight
         
-    def setPUp(self, pUp):
-        self.pUp = pUp
+    def setQUp(self, qUp):
+        self.qUp = qUp
     
-    def setPDown(self, pDown):
-        self.pDown = pDown
+    def setQDown(self, qDown):
+        self.qDown = qDown
     
     def getGridName(self):
         return self.gridName
