@@ -4,6 +4,7 @@ Created on Nov 3, 2015
 @author: NiharKhetan
 '''
 from Grid import Grid
+
 class GridWorld(object):
 
     def __init__(self, listOfGrids):
@@ -99,48 +100,51 @@ class GridWorld(object):
         else:
             return 'up'
         
+                
     def printGridWorldValueMatrix(self):
         ''' Print Grid World Value Matrix'''
-        print
-        print " "+"*"*97
-        print "\t\t\t\t\tGrid World Value Matrix"
-        print " "+"*"*97
-        for i in range(4, -1, -1): 
+        
+        print        
+        print '{:^{screenWidth}}'.format('{:*^{w}}'.format('', w = 69), screenWidth=screenWidth)
+        print '{:^{screenWidth}}'.format('{:^{w}}'.format('Grid World Value Matrix', w = 49), screenWidth=screenWidth)
+        print '{:^{screenWidth}}'.format('{:*^{w}}'.format('', w = 69), screenWidth=screenWidth)    
+                 
+        for i in range(4, -1, -1):             
+            rowText = '' 
             for j in range(0, 4):
-                padding = 16             
                 currState = self.grids[i][j]
-                signPlaceholder=''
-                if currState.value >= 0:
-                    signPlaceholder = ' '
-                    padding -=1
-                print "|\t"+signPlaceholder + str(currState.value) + " "*(padding - len(str(currState.value))),
+                rowText += '|{:^15}'.format('{: f}'.format(currState.value))
                 if j==3:
-                    print "|",
-            print "\n ","-"*95   
+                    rowText +=  "|"
+            print '{:^{screenWidth}}'.format('{:^{w}}'.format(rowText, w = 69), screenWidth=screenWidth)
+            print '{:^{screenWidth}}'.format('{:-^{w}}'.format('', w = 65), screenWidth=screenWidth)
         print "\n"
         
     def printGridWorldRewardMatrix(self):
         ''' Print Grid World Reward Matrix'''
-        print
-        print " "+"*"*65
-        print "\t\tGrid World Reward Matrix"
-        print " "+"*"*65
 
-        for i in range(4, -1, -1): 
+        print        
+        print '{:^{screenWidth}}'.format('{:*^{w}}'.format('', w = 49), screenWidth=screenWidth)
+        print '{:^{screenWidth}}'.format('{:^{w}}'.format('Grid World Reward Matrix', w = 49), screenWidth=screenWidth)
+        print '{:^{screenWidth}}'.format('{:*^{w}}'.format('', w = 49), screenWidth=screenWidth)    
+ 
+        for i in range(4, -1, -1):
+            rowText = '' 
             for j in range(0, 4):
-                padding = 8
                 currState = self.grids[i][j]
-                signPlaceholder=''
-                if currState.gridReward >= 0:
-                    signPlaceholder = ' '
-                    padding -=1
-                print "|\t"+signPlaceholder + str(currState.gridReward) + " "*(padding - len(str(currState.gridReward))),
+                rowText+= '|{:^10}'.format('{: d}'.format(currState.gridReward))
                 if j==3:
-                    print "|",
-            print "\n ","-"*63   
+                    rowText+= "|"
+            print '{:^{screenWidth}}'.format('{:^{w}}'.format(rowText, w = 49), screenWidth=screenWidth)
+            print '{:^{screenWidth}}'.format('{:-^{w}}'.format('', w = 45), screenWidth=screenWidth)
         print "\n"
-        
+
+
+screenWidth = 90
+            
 if __name__ == '__main__':
+
+
     # Creating a sample world
     grid1 = Grid(1, -1)
     grid2 = Grid(2, -1)
@@ -178,4 +182,4 @@ if __name__ == '__main__':
 #                 
     gWorld.getAllGridsReachableFromCurGrid(grid17)
     gWorld.printGridWorldValueMatrix()
-    gWorld.printGridWorldRewardMatrix()
+#     gWorld.printGridWorldRewardMatrix()

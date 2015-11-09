@@ -102,10 +102,11 @@ def valueIterateAllMoves():
   
 if __name__ == '__main__':
 
-    print "=" * 90
-    print "\t\t\tWelcome to Gold Explorer Using Reinforcement Learning"
-    print "=" * 90
-    print "\n"
+    screenWidth = 90
+    print '{:^{screenWidth}}'.format('{:=^{w}}'.format('', w = screenWidth-10), screenWidth=screenWidth)
+    print '{:^{screenWidth}}'.format('{:^{w}}'.format('Welcome to Gold Explorer Using Reinforcement Learning', w = screenWidth-10), screenWidth=screenWidth)
+    print '{:^{screenWidth}}'.format('{:=^{w}}'.format('', w = screenWidth-10), screenWidth=screenWidth)    
+    print 
      
      # Creating a sample world
     grid1 = Grid(1, -1)
@@ -139,8 +140,7 @@ if __name__ == '__main__':
     gWorld.printGridWorldRewardMatrix()           
     gWorld.printGridWorldValueMatrix()
  
-    
-    print "=" * 90
-    print "\t\tThank you for using Gold Explorer Using Reinforcement Learning"
-    print "=" * 90
-    print "\n\n"
+    print '{:^{screenWidth}}'.format('{:=^{w}}'.format('', w = screenWidth-10), screenWidth=screenWidth)
+    print '{:^{screenWidth}}'.format('{:^{w}}'.format('Thank you for using Gold Explorer Using Reinforcement Learning', w = screenWidth-10), screenWidth=screenWidth)
+    print '{:^{screenWidth}}'.format('{:=^{w}}'.format('', w = screenWidth-10), screenWidth=screenWidth)    
+    print 
