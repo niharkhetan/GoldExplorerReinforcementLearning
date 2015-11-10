@@ -29,7 +29,7 @@ class Grid(object):
         '''
         self.gridName = Name
         self.gridReward = gridReward
-        self.qLeft = 0
+        self.qLeft =  0
         self.qRight = 0
         self.qUp = 0
         self.qDown = 0
@@ -41,7 +41,7 @@ class Grid(object):
         return self.qLeft
     
     def getQRight(self):
-        return self.qLeft
+        return self.qRight
     
     def getQUp(self):
         return self.qUp
@@ -62,7 +62,7 @@ class Grid(object):
         self.qDown = qDown
     
     def getGridName(self):
-        return self.gridName
+        return str(self.gridName)
     
     def isGoal(self):
         return self.isGoalFlag
@@ -77,6 +77,9 @@ class Grid(object):
         i = (self.gridName -1) // 4
         j = (self.gridName -1) % 4
         return (i, j)
+    
+    def getGridReward(self):
+        return self.gridReward
         
 if __name__ == '__main__':
     pass

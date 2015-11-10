@@ -10,6 +10,54 @@ if __name__ == '__main__':
 from World.Grid import Grid
 from World.GridWorld import GridWorld
 
+
+def printGridsDeleteMe(gWorld):
+    '''
+    for i in range(0,3):
+        for j in range(0,3):
+            print "    "+"%2.2f"+"    "
+    '''
+    newWorld = []
+    for row in gWorld.getGrids():
+        newRow = []
+        for grid in row:
+            newRow.append("     ")
+            newRow.append('{:^8}'.format('{: .2f}'.format(grid.getQDown())))            
+            newRow.append("     ")
+        newWorld.append(newRow)
+        newRow = []
+        for grid in row:
+            newRow.append('{:<3}'.format('{: .2f}'.format(grid.getQLeft())))
+            newRow.append('{:^8}'.format('('+grid.getGridName()+')'))
+#             newRow.append('{:^8}'.format(''))            
+            newRow.append('{:>4}'.format('{: .2f}'.format(grid.getQRight())))
+        newWorld.append(newRow)
+        newRow = [] 
+        for grid in row:
+            newRow.append("     ")
+            newRow.append('{:^8}'.format('{: .2f}'.format(grid.getQUp())))            
+            newRow.append("     ")
+        newWorld.append(newRow)
+    
+    rowCount = 0
+    print '-'*93
+    for n in range(len(newWorld) - 1, -1, -1):
+        row = newWorld[n]
+        colCount = 0
+        print '|',
+        for smallerGrid in row:
+            print smallerGrid,
+            colCount += 1
+            if colCount % 3 == 0:
+                print "|",
+        rowCount += 1
+        if rowCount % 3 == 0:
+            print 
+            print '-'*93
+        else:
+            print 
+
+
 def printGrids(gWorld):
     '''
     for i in range(0,3):
