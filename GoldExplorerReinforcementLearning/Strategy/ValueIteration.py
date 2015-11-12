@@ -1,7 +1,7 @@
 '''
 Created on Nov 6, 2015
 
-@author: NiharKhetan
+@author: NiharKhetan, Ghanshyam Malu
 '''
 
 from World.Grid import Grid
@@ -46,14 +46,17 @@ def isConverged(oldGridMatrixValue,newGridMatrixValue):
     return True
     
 
-def valueIterateAllMoves():
+def valueIterate():
     gamma = 0.9
-    count = 0
+    count = 0 
+    sys.stdout.write('\n\tIterating.') if printDebugStatementsFlag == False else None
+    
     while True:
         count+=1
         oldGridMatrixValue = getGridMatrixValue(gWorld)
         
-#         for i in range(0, 5): 
+        if count % 25 == 0:
+            sys.stdout.write(".") if printDebugStatementsFlag == False else None             
         for i in range(4, -1, -1): 
             for j in range(0, 4):
                 currState = gWorld.getGrids()[i][j]
@@ -86,7 +89,7 @@ def valueIterateAllMoves():
                         values.append(bellmanValue)
                         sys.stdout.write("\n\t****Calculated value for '"+transitionDirection+"' from current state '"+ str(currState.getGridName())+"' : "+ str(bellmanValue)) if printDebugStatementsFlag == True else None
 
-                    sys.stdout.write("\n\nAll values:"+ str( values)+ " Chosen value:"+ str( max(values))) if printDebugStatementsFlag == True else None
+                    sys.stdout.write("\n\n\tAll values:"+ str( values)+ "\n\t Chosen value:"+ str( max(values))+ "\n") if printDebugStatementsFlag == True else None
                     currState.value = max(values)
                     gWorld.printGridWorldValueMatrix() if printDebugStatementsFlag == True else None
         newGridMatrixValue = getGridMatrixValue(gWorld)
@@ -96,18 +99,39 @@ def valueIterateAllMoves():
         gWorld.printGridWorldRewardMatrix() if printDebugStatementsFlag == True else None
         
         if convergedFlag == True:
+            print '\n\n{:^{screenWidth}}\n'.format('{:%^{w}}'.format(" Total # of Value Iterations :" + str(count)+" ", w = screenWidth-20), screenWidth=screenWidth)
             break
         
-#     print "No. of iterations:", count
+     
   
-if __name__ == '__main__':
-
-    screenWidth = 90
+def valueIterationMain(gWorldArg, gammaArg, printDebugStatementsFlagArg, screenWidthArg):
+    global gWorld
+    global screenWidth
+    global printDebugStatementsFlag
+    global gamma
+    
+    gWorld = gWorldArg
+    screenWidth = screenWidthArg
+    printDebugStatementsFlag = printDebugStatementsFlagArg
+    gamma = gammaArg
+    
     print '{:^{screenWidth}}'.format('{:=^{w}}'.format('', w = screenWidth-10), screenWidth=screenWidth)
-    print '{:^{screenWidth}}'.format('{:^{w}}'.format('Welcome to Gold Explorer Using Reinforcement Learning', w = screenWidth-10), screenWidth=screenWidth)
+    print '{:^{screenWidth}}'.format('{:^{w}}'.format('Welcome to Gold Explorer Using Reinforcement Learning - Value Iteration', w = screenWidth-10), screenWidth=screenWidth)
     print '{:^{screenWidth}}'.format('{:=^{w}}'.format('', w = screenWidth-10), screenWidth=screenWidth)    
     print 
-     
+   
+    valueIterate()
+
+    gWorld.printGridWorldRewardMatrix()           
+    gWorld.printGridWorldValueMatrix()
+ 
+    print '{:^{screenWidth}}'.format('{:=^{w}}'.format('', w = screenWidth-10), screenWidth=screenWidth)
+    print '{:^{screenWidth}}'.format('{:^{w}}'.format('Thank you for using Gold Explorer Using Reinforcement Learning - Value Iteration', w = screenWidth-10), screenWidth=screenWidth)
+    print '{:^{screenWidth}}'.format('{:=^{w}}'.format('', w = screenWidth-10), screenWidth=screenWidth)    
+    print 
+    
+if __name__ == '__main__':
+
      # Creating a sample world
     grid1 = Grid(1, -1)
     grid2 = Grid(2, -1)
@@ -134,13 +158,4 @@ if __name__ == '__main__':
     gWorld = GridWorld([[grid1,grid2,grid3,grid4],[grid5,grid6,grid7,grid8],[grid9,grid10,grid11,grid12],[grid13,grid14,grid15,grid16],[grid17,grid18,grid19,grid20]])
     gWorld.setMovement({"left":{"left":1}, "right":{"right":0.8, "down":0.2}, "up":{"up":0.8, "left":0.2}, "down":{"down":1}})
         
-    printDebugStatementsFlag = False
-    valueIterateAllMoves()
-
-    gWorld.printGridWorldRewardMatrix()           
-    gWorld.printGridWorldValueMatrix()
- 
-    print '{:^{screenWidth}}'.format('{:=^{w}}'.format('', w = screenWidth-10), screenWidth=screenWidth)
-    print '{:^{screenWidth}}'.format('{:^{w}}'.format('Thank you for using Gold Explorer Using Reinforcement Learning', w = screenWidth-10), screenWidth=screenWidth)
-    print '{:^{screenWidth}}'.format('{:=^{w}}'.format('', w = screenWidth-10), screenWidth=screenWidth)    
-    print 
+    valueIterationMain(gWorld, 0.9, True, 90)

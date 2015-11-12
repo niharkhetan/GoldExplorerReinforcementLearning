@@ -1,14 +1,13 @@
 '''
 Created on Nov 6, 2015
 
-@author: NiharKhetan
+@author: NiharKhetan, Ghanshyam Malu
 '''
 
 from World.Grid import Grid
-from World.GridWorld import GridWorld
+from World.GridWorld import GridWorld, screenWidth
 from Strategy.PrintGridWorld import printGrids
 import sys
-from random import randint
 import random
 
 def randChoiceList(weighted_choices):
@@ -92,15 +91,10 @@ def exploit(currGrid, gWorld):
     
     finalProbableActionChoice, nextGrid = getNextGridBasedOnDirectionalProbability(currGrid, maxQValueDirection)
     return finalProbableActionChoice, nextGrid
-    
-    
+       
 def qLearn():
-    
-    # Q Learning Parameters
-    gamma = 0.9
-    alpha = 0.1
-    epsilon = 0.5    
-    
+        
+    global epsilon
     # Counters
     iterationCount = 0
     episodeCount=0
@@ -108,6 +102,8 @@ def qLearn():
     currGrid = gWorld.getGrids()[0][0]   
     epsilon_choices = randChoiceList([('explore', epsilon), ('exploit', 1-epsilon )])
     
+    sys.stdout.write('\n\tIterating.') if printDebugStatementsFlag == False else None
+
     while True:
 
         oldGridMatrixValue = getGridWorldQValues(gWorld) # To Check for convergence        
@@ -116,7 +112,7 @@ def qLearn():
         
         sys.stdout.write('\n{:^{screenWidth}}\n'.format('{:#^{w}}'.format(' Episode #'+str(episodeCount)+" ", w = screenWidth-10), screenWidth=screenWidth)) if printDebugStatementsFlag == True else None
         
-        if episodeCount % 10 == 0 :
+        if episodeCount % 100 == 0 :
             epsilon = epsilon / (1 + epsilon)
             sys.stdout.write('\n\n{:^{screenWidth}}\n'.format('{:<{w}}'.format('***Updating epsilon to:'+ str(epsilon)+" ", w = screenWidth-10), screenWidth=screenWidth)) if printDebugStatementsFlag == True else None
         
@@ -136,6 +132,12 @@ def qLearn():
                  
             else:                
                 iterationCount +=1 
+                
+                if iterationCount % 200 == 0:
+                    sys.stdout.write(".") if printDebugStatementsFlag == False else None  
+                if iterationCount % 10500 == 0:
+                    sys.stdout.write("\n\t") if printDebugStatementsFlag == False else None
+            
                 sys.stdout.write('\n{:^{screenWidth}}\n'.format('{:#^{w}}'.format(' Iteration #'+str(iterationCount)+" ", w = screenWidth-10), screenWidth=screenWidth)) if printDebugStatementsFlag == True else None
                 
                 exploitOrExplore = random.choice(epsilon_choices)
@@ -151,7 +153,7 @@ def qLearn():
                 maxQValueNextGrid = max(allQValuesOfNextGrid)
 
                 sys.stdout.write('\n{:^{screenWidth}}'.format('{:<{w}}'.format("Action Chosen \t: "+ nextGridDirection+ "\tNextGrid : ("+ nextGrid.getGridName()+")" , w = screenWidth-10), screenWidth=screenWidth)) if printDebugStatementsFlag == True else None
-                sys.stdout.write('\n{:^{screenWidth}}'.format('{:<{w}}'.format("All QValues Of NextGrid : "+ ','.join([str(v) for v in allQValuesOfNextGrid])+ "\tMax : " + str(maxQValueNextGrid), w = screenWidth-10), screenWidth=screenWidth)) if printDebugStatementsFlag == True else None
+                sys.stdout.write('\n{:^{screenWidth}}'.format('{:<{w}}'.format("All QValues Of NextGrid : "+ ','.join([str(round(v,3)) for v in allQValuesOfNextGrid])+ "\tMax : " + str(maxQValueNextGrid), w = screenWidth-10), screenWidth=screenWidth)) if printDebugStatementsFlag == True else None
 
                 # Compute the Q(s,a) 
                 qValofCurrGrid = getQValueforCurrGrid(currGrid, nextGridDirection) 
@@ -159,7 +161,7 @@ def qLearn():
                 
                 # Update Q Value of the current grid for the corresponding direction
                 updateGridQValue(currGrid, nextGridDirection, newQValofCurrGrid)
-                sys.stdout.write('\n{:^{screenWidth}}'.format('{:<{w}}'.format("Updated Grid "+ currGrid.getGridName()+" to : "+ str(newQValofCurrGrid), w = screenWidth-10), screenWidth=screenWidth)) if printDebugStatementsFlag == True else None
+                sys.stdout.write('\n{:^{screenWidth}}'.format('{:<{w}}'.format("Using the Q(s,a) equation, updated Grid "+ currGrid.getGridName()+"'s "+ nextGridDirection+" QValue to : "+ str(newQValofCurrGrid), w = screenWidth-10), screenWidth=screenWidth)) if printDebugStatementsFlag == True else None
                     
                 # Update current grid
                 currGrid = nextGrid
@@ -168,8 +170,9 @@ def qLearn():
                     sys.stdout.write('\n{:^{screenWidth}}\n'.format('{:<{w}}'.format("Goal Reached", w = screenWidth-10), screenWidth=screenWidth)) if printDebugStatementsFlag == True else None
                     break
 
-                printGrids(gWorld)
-                print "\n\n"
+                if printDebugStatementsFlag:
+                    printGrids(gWorld)
+                    print "\n\n"
 
         
         currGrid = gWorld.getGrids()[0][0]
@@ -178,25 +181,38 @@ def qLearn():
         convergedFlag = isConverged(oldGridMatrixValue,newGridMatrixValue)
                   
         if convergedFlag == True:
-            sys.stdout.write('\n\n{:^{screenWidth}}'.format('{:%^{w}}'.format(" No. of iterations\t:" + str(iterationCount)+" ", w = screenWidth-20), screenWidth=screenWidth)) if printDebugStatementsFlag == True else None
-            sys.stdout.write('\n{:^{screenWidth}}\n'.format('{:%^{w}}'.format(" No. of episodeCount\t:" + str(episodeCount)+" ", w = screenWidth-20), screenWidth=screenWidth)) if printDebugStatementsFlag == True else None            
+            print '\n\n{:^{screenWidth}}'.format('{:%^{w}}'.format(" Total # of iterations\t:" + str(iterationCount)+" ", w = screenWidth-20), screenWidth=screenWidth)
+            print '\n{:^{screenWidth}}\n'.format('{:%^{w}}'.format(" Total # of episodeCount\t:" + str(episodeCount)+" ", w = screenWidth-20), screenWidth=screenWidth)            
             break
                         
-#         if episodeCount > 1: 
-#             sys.stdout.write('\n\n{:^{screenWidth}}'.format('{:%^{w}}'.format(" No. of iterations\t:" + str(iterationCount)+" ", w = screenWidth-20), screenWidth=screenWidth)) if printDebugStatementsFlag == True else None
-#             sys.stdout.write('\n{:^{screenWidth}}\n'.format('{:%^{w}}'.format(" No. of episodeCount\t:" + str(episodeCount)+" ", w = screenWidth-20), screenWidth=screenWidth)) if printDebugStatementsFlag == True else None            
-#             break
-#       
-if __name__ == '__main__':
+def qLearnMain(gWorldArg, gammaArg, alphaArg, epsilonArg, printDebugStatementsFlagArg, screenWidthArg):
+    global gWorld, screenWidth, printDebugStatementsFlag
+    global gamma, alpha, epsilon
+    
+    gWorld = gWorldArg
+    screenWidth = screenWidthArg
+    printDebugStatementsFlag = printDebugStatementsFlagArg
 
-    #//TODO: Make Grid 20 special. Any move from Grid 20 should bounce back to Grid 20
-    screenWidth = 90
+    # Q Learning Parameters
+    gamma = gammaArg
+    alpha = alphaArg
+    epsilon = epsilonArg    
+
     print '{:^{screenWidth}}'.format('{:=^{w}}'.format('', w = screenWidth-10), screenWidth=screenWidth)
     print '{:^{screenWidth}}'.format('{:^{w}}'.format('Welcome to Gold Explorer Using Reinforcement Learning  - Q Learning', w = screenWidth-10), screenWidth=screenWidth)
     print '{:^{screenWidth}}'.format('{:=^{w}}'.format('', w = screenWidth-10), screenWidth=screenWidth)    
     print 
-     
-     # Creating a sample world
+   
+    qLearn()
+    printGrids(gWorld)
+
+    print '{:^{screenWidth}}'.format('{:=^{w}}'.format('', w = screenWidth-10), screenWidth=screenWidth)
+    print '{:^{screenWidth}}'.format('{:^{w}}'.format('Thank you for using Gold Explorer Using Reinforcement Learning - Q Learning', w = screenWidth-10), screenWidth=screenWidth)
+    print '{:^{screenWidth}}'.format('{:=^{w}}'.format('', w = screenWidth-10), screenWidth=screenWidth)    
+    print 
+    
+if __name__ == '__main__':
+    # Creating a sample world
     grid1 = Grid(1, -1)
     grid2 = Grid(2, -1)
     grid3 = Grid(3, -1)
@@ -222,13 +238,12 @@ if __name__ == '__main__':
     
     gWorld = GridWorld([[grid1,grid2,grid3,grid4],[grid5,grid6,grid7,grid8],[grid9,grid10,grid11,grid12],[grid13,grid14,grid15,grid16],[grid17,grid18,grid19,grid20]])
     gWorld.setMovement({"left":{"left":1}, "right":{"right":0.8, "down":0.2}, "up":{"up":0.8, "left":0.2}, "down":{"down":1}})
-          
-    printDebugStatementsFlag = True
-    qLearn()
+
+    printDebugStatementsFlag = False
+    screenWidthArg = 90
     
-    #printGrids(gWorld)
-    print '{:^{screenWidth}}'.format('{:=^{w}}'.format('', w = screenWidth-10), screenWidth=screenWidth)
-    print '{:^{screenWidth}}'.format('{:^{w}}'.format('Thank you for using Gold Explorer Using Reinforcement Learning - Q Learning', w = screenWidth-10), screenWidth=screenWidth)
-    print '{:^{screenWidth}}'.format('{:=^{w}}'.format('', w = screenWidth-10), screenWidth=screenWidth)    
-    print 
-    
+    # Q Learning Parameters
+    gamma = 0.9
+    alpha = 0.1
+    epsilon = 0.9
+    qLearnMain(gWorld,gamma,alpha, epsilon, printDebugStatementsFlag,screenWidthArg )
