@@ -13,7 +13,7 @@ import random
 
 def randChoiceList(weighted_choices):
     ''' Random Weighted List '''    
-    population = [val for val, cnt in weighted_choices for i in range(int(cnt*100))]
+    population = [val for val, cnt in weighted_choices for i in range(int(cnt*10))]
     return population
 
 def isConverged(oldGridMatrixValue,newGridMatrixValue):
@@ -37,20 +37,19 @@ def getGridWorldQValues(gWorld):
         gMatValue.append(subList)
     return gMatValue
 
-def updateGridQValue(currGrid, maxQValueNextStateDirection, maxQValueNextState):
-    ''' Update the given Q Value of the grid'''
-    sys.stdout.write("\n\t"+"Updating Grid "+ currGrid.getGridName()+" "+ maxQValueNextStateDirection+ " to: "+ str(maxQValueNextState)+"\n") if printDebugStatementsFlag == True else None    
-    if maxQValueNextStateDirection == 'up':
-        currGrid.setQUp(maxQValueNextState)
+def updateGridQValue(currGrid, nextGridDirection, newQValofCurrGrid):
+    ''' Update the given Q Value of the grid'''    
+    if nextGridDirection == 'up':
+        currGrid.setQUp(newQValofCurrGrid)
         
-    elif maxQValueNextStateDirection == 'down':
-        currGrid.setQDown(maxQValueNextState)
+    elif nextGridDirection == 'down':
+        currGrid.setQDown(newQValofCurrGrid)
     
-    elif maxQValueNextStateDirection == 'left':
-        currGrid.setQLeft(maxQValueNextState)
+    elif nextGridDirection == 'left':
+        currGrid.setQLeft(newQValofCurrGrid)
     
-    elif maxQValueNextStateDirection == 'right':
-        currGrid.setQRight(maxQValueNextState)
+    elif nextGridDirection == 'right':
+        currGrid.setQRight(newQValofCurrGrid)
     
 def getQValueforCurrGrid(currGrid, direction):
     ''' Get the Q Value of the current grid for the given direction '''
@@ -69,108 +68,104 @@ def getQValueforCurrGrid(currGrid, direction):
     
     return qValue
     
+def getNextGridBasedOnDirectionalProbability(currGrid, direction):
+    # For a given direction, getting a probable direction. Ex : For Up, 0.8 chance of Up and 0.2 chance of Left
+    probableDirectionsForASpecificDirection = randChoiceList([(direction,prob) for direction,prob in gWorld.getMovement()[direction].iteritems()])
+    finalProbableActionChoice = random.choice(probableDirectionsForASpecificDirection)
+    
+    # Get the next grid based on the given direction
+    nextGrid = gWorld.getNextGrid(currGrid,finalProbableActionChoice)
+    return finalProbableActionChoice, nextGrid
+    
+def explore(currGrid, gWorld):
+    ''' Explore a random direction from a given currGrid in the gWorld ''' 
+    # A random direction from the list of all directions
+    randomDirection = random.choice(gWorld.getMovement().keys())
+
+    finalProbableActionChoice, nextGrid = getNextGridBasedOnDirectionalProbability(currGrid, randomDirection)
+    return finalProbableActionChoice, nextGrid
+    
+def exploit(currGrid, gWorld):
+    ''' Exploit the Q Values of the current grid to choose the maximum Qvalue direction and the corresponding the next grid'''    
+    currGridAllQValuesList = sorted([(qValue,direction) for direction,qValue in currGrid.getAllQValues().iteritems()],reverse=True) 
+    maxQValueDirection = currGridAllQValuesList[0][1] # First element would be maximum for a reverse sorted list
+    
+    finalProbableActionChoice, nextGrid = getNextGridBasedOnDirectionalProbability(currGrid, maxQValueDirection)
+    return finalProbableActionChoice, nextGrid
+    
+    
 def qLearn():
+    
+    # Q Learning Parameters
     gamma = 0.9
     alpha = 0.1
     epsilon = 0.5    
     
-    steps = 0
+    # Counters
+    iterationCount = 0
     episodeCount=0
     
-#     currGrid = gWorld.getGrids()[randint(0,4)][randint(0,3)]
     currGrid = gWorld.getGrids()[0][0]   
-    
     epsilon_choices = randChoiceList([('explore', epsilon), ('exploit', 1-epsilon )])
-    print 
-
+    
     while True:
 
         oldGridMatrixValue = getGridWorldQValues(gWorld) # To Check for convergence        
         episodeCount +=1
         goalTraversedFlag = False
         
-        print "\n\n======================= New Episode :", episodeCount
+        sys.stdout.write('\n{:^{screenWidth}}\n'.format('{:#^{w}}'.format(' Episode #'+str(episodeCount)+" ", w = screenWidth-10), screenWidth=screenWidth)) if printDebugStatementsFlag == True else None
+        
         if episodeCount % 10 == 0 :
             epsilon = epsilon / (1 + epsilon)
-            print "%%%%%%%%%%%%%%%%%%%%%%%%%%%%Updating epsilon to:", epsilon
+            sys.stdout.write('\n\n{:^{screenWidth}}\n'.format('{:<{w}}'.format('***Updating epsilon to:'+ str(epsilon)+" ", w = screenWidth-10), screenWidth=screenWidth)) if printDebugStatementsFlag == True else None
         
         while True:
                                     
             if currGrid.isGoal():
-                print "Goal Reached Once"
+                sys.stdout.write('\n{:^{screenWidth}}\n'.format('{:<{w}}'.format('***Goal Reached Once, setting the flag', w = screenWidth-10), screenWidth=screenWidth)) if printDebugStatementsFlag == True else None
                 goalTraversedFlag = True
             
-            print "\n\n********Curr Grid:", currGrid.getGridName()
     
-            sys.stdout.write("\n"+ "-"*50) if printDebugStatementsFlag == True else None
-            sys.stdout.write("\nCurrent Grid: "+ str(currGrid.getGridName())+ "\tQ Value : " + str(currGrid.value) + "\tReward : " + str(currGrid.gridReward)) if printDebugStatementsFlag == True else None
-            sys.stdout.write("\n"+ "-"*50) if printDebugStatementsFlag == True else None
-           #sys.stdout.write("\nPossibleTransitions: "+ ' '.join([key1 + str(val1.getGridName()) for key1,val1 in allGridsReachableFromCurGrid.iteritems()])) if printDebugStatementsFlag == True else None
+            sys.stdout.write('\n{:^{screenWidth}}'.format('{:*^{w}}'.format('', w = screenWidth-10), screenWidth=screenWidth)) if printDebugStatementsFlag == True else None
+            sys.stdout.write('\n{:^{screenWidth}}'.format('{:<{w}}'.format(" Current Grid: "+ str(currGrid.getGridName())+ "\tQ Value : " + str(currGrid.value) + "\tReward : " + str(currGrid.gridReward), w = screenWidth-10), screenWidth=screenWidth)) if printDebugStatementsFlag == True else None
+            sys.stdout.write('\n{:^{screenWidth}}'.format('{:*^{w}}'.format('', w = screenWidth-10), screenWidth=screenWidth)) if printDebugStatementsFlag == True else None
     
             if currGrid.isBlocked():
-                sys.stdout.write("\n\tBlocked Grid... Skipping") if printDebugStatementsFlag == True else None  
-            else:
-                steps +=1            
-                allGridsReachableFromCurGrid = gWorld.getAllGridsReachableFromCurGrid(currGrid)
+                sys.stdout.write('\n{:^{screenWidth}}'.format('{:<{w}}'.format('Blocked Grid... Skipping', w = screenWidth-10), screenWidth=screenWidth)) if printDebugStatementsFlag == True else None
+                 
+            else:                
+                iterationCount +=1 
+                sys.stdout.write('\n{:^{screenWidth}}\n'.format('{:#^{w}}'.format(' Iteration #'+str(iterationCount)+" ", w = screenWidth-10), screenWidth=screenWidth)) if printDebugStatementsFlag == True else None
                 
                 exploitOrExplore = random.choice(epsilon_choices)
                 
                 if exploitOrExplore == 'explore':
-                    sys.stdout.write("\n\t*****"+ exploitOrExplore) if printDebugStatementsFlag == True else None                
-             
-                    nextGridDirection,nextGrid = random.choice([(k,v) for k,v in allGridsReachableFromCurGrid.iteritems()])
-    
-                    allQValuesOfNextGrid = [nextGrid.getQLeft(),nextGrid.getQRight(),nextGrid.getQUp(),nextGrid.getQDown()]
-                    maxQValueNextGrid = max(allQValuesOfNextGrid)
-    
-                    sys.stdout.write("\n\t\t"+"Random allQValuesOfNextGrid-"+ nextGridDirection+ nextGrid.getGridName()+": "+  "".join(','.join(str(v) for v in allQValuesOfNextGrid))) if printDebugStatementsFlag == True else None
-                    sys.stdout.write("\t"+"Max from allQValuesOfNextGrid: " + str(max(allQValuesOfNextGrid)) ) if printDebugStatementsFlag == True else None
-    
-                    sys.stdout.write("\n\t"+"nextGridDirection: "+ nextGridDirection+ "\tmaxQValueNextState: "+ str(maxQValueNextGrid)) if printDebugStatementsFlag == True else None
-                    
-                    # Compute the Q(s,a) 
-                    qValofCurrGrid = getQValueforCurrGrid(currGrid, nextGridDirection) 
-                    newQValofCurrGrid = qValofCurrGrid + alpha * (currGrid.getGridReward() + (gamma * maxQValueNextGrid) - qValofCurrGrid)  
-                    
-                    # Update Q Value of the current grid for the corresponding direction
-                    updateGridQValue(currGrid, nextGridDirection, newQValofCurrGrid)
-                    
-    
-                                
-                    
+                    sys.stdout.write('\n{:^{screenWidth}}\n'.format('{:<{w}}'.format('*****Exploring', w = screenWidth-10), screenWidth=screenWidth)) if printDebugStatementsFlag == True else None
+                    nextGridDirection,nextGrid = explore(currGrid, gWorld)
                 elif exploitOrExplore == 'exploit':
-                    sys.stdout.write("\n\t*****"+ exploitOrExplore) if printDebugStatementsFlag == True else None                
+                    sys.stdout.write('\n{:^{screenWidth}}\n'.format('{:<{w}}'.format('*****Exploiting', w = screenWidth-10), screenWidth=screenWidth)) if printDebugStatementsFlag == True else None
+                    nextGridDirection,nextGrid = exploit(currGrid, gWorld)
                     
-                    nextGrid = None
-                    maxQValueNextGridDirection = None
-                    maxQValueNextGrid = -sys.maxint - 1 # Minimum Number
-                    
-                    for direction,grid in allGridsReachableFromCurGrid.iteritems():
-                        allQValuesOfNextGrid = [grid.getQLeft(),grid.getQRight(),grid.getQUp(),grid.getQDown()]
-                        maxOfAllQValuesOfNextGrid = max(allQValuesOfNextGrid)
-                        
-                        if maxOfAllQValuesOfNextGrid >= maxQValueNextGrid:
-                            nextGrid = grid
-                            maxQValueNextGrid = maxOfAllQValuesOfNextGrid
-                            maxQValueNextGridDirection = direction
-    
-                        sys.stdout.write("\n\t\t"+"allQValuesOfNextGrid-"+ direction+ grid.getGridName()+": "+  "".join(','.join(str(v) for v in allQValuesOfNextGrid))) if printDebugStatementsFlag == True else None
-                        sys.stdout.write("\t"+"Max from allQValuesOfNextGrid: " + str(max(allQValuesOfNextGrid)) ) if printDebugStatementsFlag == True else None
-    
-                    sys.stdout.write("\n\t"+"maxQValueNextStateDirection: "+ maxQValueNextGridDirection+ "\tmaxQValueNextState: "+ str(maxQValueNextGrid)) if printDebugStatementsFlag == True else None
-                    
-                    # Compute the Q(s,a) 
-                    qValofCurrGrid = getQValueforCurrGrid(currGrid, direction) 
-                    newQValofCurrGrid = qValofCurrGrid + alpha * (currGrid.getGridReward() + (gamma * maxOfAllQValuesOfNextGrid) - qValofCurrGrid)  
-                    
-                    # Update Q Value of the current grid for the corresponding direction
-                    updateGridQValue(currGrid, maxQValueNextGridDirection, newQValofCurrGrid)
+                allQValuesOfNextGrid = [nextGrid.getQLeft(),nextGrid.getQRight(),nextGrid.getQUp(),nextGrid.getQDown()]
+                maxQValueNextGrid = max(allQValuesOfNextGrid)
+
+                sys.stdout.write('\n{:^{screenWidth}}'.format('{:<{w}}'.format("Action Chosen \t: "+ nextGridDirection+ "\tNextGrid : ("+ nextGrid.getGridName()+")" , w = screenWidth-10), screenWidth=screenWidth)) if printDebugStatementsFlag == True else None
+                sys.stdout.write('\n{:^{screenWidth}}'.format('{:<{w}}'.format("All QValues Of NextGrid : "+ ','.join([str(v) for v in allQValuesOfNextGrid])+ "\tMax : " + str(maxQValueNextGrid), w = screenWidth-10), screenWidth=screenWidth)) if printDebugStatementsFlag == True else None
+
+                # Compute the Q(s,a) 
+                qValofCurrGrid = getQValueforCurrGrid(currGrid, nextGridDirection) 
+                newQValofCurrGrid = qValofCurrGrid + alpha * (currGrid.getGridReward() + (gamma * maxQValueNextGrid) - qValofCurrGrid)  
+                
+                # Update Q Value of the current grid for the corresponding direction
+                updateGridQValue(currGrid, nextGridDirection, newQValofCurrGrid)
+                sys.stdout.write('\n{:^{screenWidth}}'.format('{:<{w}}'.format("Updated Grid "+ currGrid.getGridName()+" to : "+ str(newQValofCurrGrid), w = screenWidth-10), screenWidth=screenWidth)) if printDebugStatementsFlag == True else None
                     
                 # Update current grid
                 currGrid = nextGrid
                 
                 if goalTraversedFlag == True:
-                    print "Goal Reached"
+                    sys.stdout.write('\n{:^{screenWidth}}\n'.format('{:<{w}}'.format("Goal Reached", w = screenWidth-10), screenWidth=screenWidth)) if printDebugStatementsFlag == True else None
                     break
 
                 printGrids(gWorld)
@@ -181,19 +176,20 @@ def qLearn():
 
         newGridMatrixValue = getGridWorldQValues(gWorld)
         convergedFlag = isConverged(oldGridMatrixValue,newGridMatrixValue)
-                
-#         if convergedFlag == True:
-#             print "No. of iterations:", steps
-#             print "No of episodes:", episodeCount
-#             break
-                        
-        if episodeCount > 5: 
-            print "No. of iterations:", steps
-            print "No of episodes:", episodeCount
+                  
+        if convergedFlag == True:
+            sys.stdout.write('\n\n{:^{screenWidth}}'.format('{:%^{w}}'.format(" No. of iterations\t:" + str(iterationCount)+" ", w = screenWidth-20), screenWidth=screenWidth)) if printDebugStatementsFlag == True else None
+            sys.stdout.write('\n{:^{screenWidth}}\n'.format('{:%^{w}}'.format(" No. of episodeCount\t:" + str(episodeCount)+" ", w = screenWidth-20), screenWidth=screenWidth)) if printDebugStatementsFlag == True else None            
             break
-      
+                        
+#         if episodeCount > 1: 
+#             sys.stdout.write('\n\n{:^{screenWidth}}'.format('{:%^{w}}'.format(" No. of iterations\t:" + str(iterationCount)+" ", w = screenWidth-20), screenWidth=screenWidth)) if printDebugStatementsFlag == True else None
+#             sys.stdout.write('\n{:^{screenWidth}}\n'.format('{:%^{w}}'.format(" No. of episodeCount\t:" + str(episodeCount)+" ", w = screenWidth-20), screenWidth=screenWidth)) if printDebugStatementsFlag == True else None            
+#             break
+#       
 if __name__ == '__main__':
 
+    #//TODO: Make Grid 20 special. Any move from Grid 20 should bounce back to Grid 20
     screenWidth = 90
     print '{:^{screenWidth}}'.format('{:=^{w}}'.format('', w = screenWidth-10), screenWidth=screenWidth)
     print '{:^{screenWidth}}'.format('{:^{w}}'.format('Welcome to Gold Explorer Using Reinforcement Learning  - Q Learning', w = screenWidth-10), screenWidth=screenWidth)
@@ -225,10 +221,12 @@ if __name__ == '__main__':
     
     
     gWorld = GridWorld([[grid1,grid2,grid3,grid4],[grid5,grid6,grid7,grid8],[grid9,grid10,grid11,grid12],[grid13,grid14,grid15,grid16],[grid17,grid18,grid19,grid20]])
-           
+    gWorld.setMovement({"left":{"left":1}, "right":{"right":0.8, "down":0.2}, "up":{"up":0.8, "left":0.2}, "down":{"down":1}})
+          
     printDebugStatementsFlag = True
     qLearn()
-    printGrids(gWorld)
+    
+    #printGrids(gWorld)
     print '{:^{screenWidth}}'.format('{:=^{w}}'.format('', w = screenWidth-10), screenWidth=screenWidth)
     print '{:^{screenWidth}}'.format('{:^{w}}'.format('Thank you for using Gold Explorer Using Reinforcement Learning - Q Learning', w = screenWidth-10), screenWidth=screenWidth)
     print '{:^{screenWidth}}'.format('{:=^{w}}'.format('', w = screenWidth-10), screenWidth=screenWidth)    

@@ -49,6 +49,13 @@ class Grid(object):
     def getQDown(self):
         return self.qDown
     
+    def getAllQValues(self):
+        return {'up': self.getQUp(),
+                'down': self.getQDown(),
+                'left': self.getQLeft(),
+                'right': self.getQRight()
+                }
+        
     def setQLeft(self, qLeft):
         self.qLeft = qLeft
         

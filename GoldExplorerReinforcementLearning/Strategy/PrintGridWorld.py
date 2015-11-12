@@ -64,6 +64,10 @@ def printGrids(gWorld):
         for j in range(0,3):
             print "    "+"%2.2f"+"    "
     '''
+    print '\n\n{:^{screenWidth}}'.format('{:*^{w}}'.format('', w = 80), screenWidth=90)
+    print '{:^{screenWidth}}'.format('{:^{w}}'.format('Grid World Q Values Matrix', w = 80), screenWidth=90)
+    print '{:^{screenWidth}}'.format('{:*^{w}}'.format('', w = 80), screenWidth=90)   
+    
     newWorld = []
     for row in gWorld.getGrids():
         newRow = []
