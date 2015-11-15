@@ -57,7 +57,8 @@ def valueIterate():
         
         if count % 25 == 0:
             sys.stdout.write(".") if printDebugStatementsFlag == False else None             
-        for i in range(4, -1, -1): 
+#         for i in range(4, -1, -1):
+        for i in range(0, 5): 
             for j in range(0, 4):
                 currState = gWorld.getGrids()[i][j]
                 if not currState.isBlocked():
@@ -82,7 +83,7 @@ def valueIterate():
                         for direction, probability in consequentMovesProbabilities.iteritems():
                             newStateRow, newStateCol = getNewStateIndexForAction(direction, (i,j))
                             sumOfProdOfProbOfMoveAndStateValue += probability * gWorld.getGrids()[newStateRow][newStateCol].value
-                            sys.stdout.write("\n\t\tChecking for '"+direction+"' from ("+ str(i)+","+ str(j)+") \t--> effective state ("+ str(newStateRow)+","+ str(newStateCol)+"); Grid:"+ str(gWorld.getGrids()[newStateRow][newStateCol].getGridName())+" ;Prob"+ str(probability)+ "; Value"+ str( gWorld.getGrids()[newStateRow][newStateCol].value)) if printDebugStatementsFlag == True else None 
+                            sys.stdout.write("\n\t\tChecking for '"+direction+"' from ("+ str(i)+","+ str(j)+") \t--> effective state ("+ str(newStateRow)+","+ str(newStateCol)+"); Grid: "+ str(gWorld.getGrids()[newStateRow][newStateCol].getGridName())+" ;Prob: "+ str(probability)+ "; Value: "+ str( gWorld.getGrids()[newStateRow][newStateCol].value)) if printDebugStatementsFlag == True else None 
 
                         valueMovedToThisGrid = gamma*sumOfProdOfProbOfMoveAndStateValue
                         bellmanValue = currState.gridReward + valueMovedToThisGrid
