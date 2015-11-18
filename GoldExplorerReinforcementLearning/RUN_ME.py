@@ -5,27 +5,27 @@ from World.GridWorld import GridWorld
 from Strategy.QLearning import *
 from Strategy.ValueIteration import *
 
-def createGridWorld():
+def createGridWorld(reward):
      # Creating a sample world
-    grid1 = Grid(1, -1)
-    grid2 = Grid(2, -1)
-    grid3 = Grid(3, -1)
-    grid4 = Grid(4, -1)
-    grid5 = Grid(5, -1)
+    grid1 = Grid(1, reward)
+    grid2 = Grid(2, reward)
+    grid3 = Grid(3, reward)
+    grid4 = Grid(4, reward)
+    grid5 = Grid(5, reward)
     grid6 = Grid(6, 0, True)
-    grid7 = Grid(7, -1)
+    grid7 = Grid(7, reward)
     grid8 = Grid(8, 0, True)
-    grid9 = Grid(9, -1)
-    grid10 = Grid(10, -1)
-    grid11 = Grid(11, -1)
-    grid12 = Grid(12, -1)
-    grid13 = Grid(13, -1)
+    grid9 = Grid(9, reward)
+    grid10 = Grid(10, reward)
+    grid11 = Grid(11, reward)
+    grid12 = Grid(12, reward)
+    grid13 = Grid(13, reward)
     grid14 = Grid(14, -50)
-    grid15 = Grid(15, -1)
-    grid16 = Grid(16, -1)
-    grid17 = Grid(17, -1)
-    grid18 = Grid(18, -1)
-    grid19 = Grid(19, -1)
+    grid15 = Grid(15, reward)
+    grid16 = Grid(16, reward)
+    grid17 = Grid(17, reward)
+    grid18 = Grid(18, reward)
+    grid19 = Grid(19, reward)
     grid20 = Grid(20, 10)
     grid20.setGoal()
         
@@ -77,6 +77,7 @@ if __name__ == '__main__':
     gamma = 0.9
     alpha = 0.1
     epsilon = 0.9
+    reward = -1
     
     optionsDict = {0: "Explore Gold using Reinforcement Learning - Value Iteration",
                1: "Explore Gold using Reinforcement Learning - Q Value"}
@@ -85,8 +86,8 @@ if __name__ == '__main__':
 
     msg = '\n{:^{screenWidth}}'.format('{:<{w}}'.format('Show detailed log (Y/N)?... : ', w = screenWidth-10), screenWidth=screenWidth)
     printDebugStatementsFlag = True if getUserInput(msg, "char", ['Y','N']).lower() == 'y' else False
-
-    gWorld = createGridWorld()
+    
+    gWorld = createGridWorld(reward)
     if userChoiceRL==0:
         valueIterationMain(gWorld,gamma, printDebugStatementsFlag,screenWidthArg )
     else:
