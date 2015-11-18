@@ -77,8 +77,7 @@ if __name__ == '__main__':
     gamma = 0.9
     alpha = 0.1
     epsilon = 0.9
-    reward = -1
-    
+        
     optionsDict = {0: "Explore Gold using Reinforcement Learning - Value Iteration",
                1: "Explore Gold using Reinforcement Learning - Q Value"}
     
@@ -86,6 +85,9 @@ if __name__ == '__main__':
 
     msg = '\n{:^{screenWidth}}'.format('{:<{w}}'.format('Show detailed log (Y/N)?... : ', w = screenWidth-10), screenWidth=screenWidth)
     printDebugStatementsFlag = True if getUserInput(msg, "char", ['Y','N']).lower() == 'y' else False
+    
+    msg = '\n{:^{screenWidth}}'.format('{:<{w}}'.format('Set reward for each block preferred option [0 or -1]... : ', w = screenWidth-10), screenWidth=screenWidth)
+    reward = getUserInput(msg, "int", [0,-1]) 
     
     gWorld = createGridWorld(reward)
     if userChoiceRL==0:
