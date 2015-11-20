@@ -204,6 +204,7 @@ def qLearnMain(gWorldArg, gammaArg, alphaArg, epsilonArg, printDebugStatementsFl
     print 
    
     qLearn()
+    gWorld.printGridWorldRewardMatrix() 
     printGrids(gWorld)
 
     print '{:^{screenWidth}}'.format('{:=^{w}}'.format('', w = screenWidth-10), screenWidth=screenWidth)

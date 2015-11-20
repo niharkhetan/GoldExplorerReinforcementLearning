@@ -1,4 +1,19 @@
-#! /usr/bin/env python
+'''
+Created on Nov 11, 2015
+
+@author: NiharKhetan, Ghanshyam Malu
+
+@desc     : Grid world for reinforcement learning
+            1. Report learned values by value iteration
+            2. Implement Q learning with initial e = 0.9
+            3. Set reward at each step to be 0. Report results. 
+            
+@Usage    : Execute the python file to run the Gold Explorer
+            $ python RUN_ME.py
+            
+@Version  : Uses Python 2.7
+
+'''
 
 from World.Grid import Grid
 from World.GridWorld import GridWorld
@@ -50,7 +65,6 @@ def getUserInput(msg, inputType, options = []):
     
     return userOption
 
-
 def getUserChoice(optionsDict):
     ''' Display available datasets to user'''
 
@@ -67,7 +81,6 @@ def getUserChoice(optionsDict):
     
     userOption = getUserInput(msg, "int", optionsDict.keys())
     return userOption
-
 
 if __name__ == '__main__':
     

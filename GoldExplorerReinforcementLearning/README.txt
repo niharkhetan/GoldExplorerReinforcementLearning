@@ -4,7 +4,7 @@ Created on Sep 20, 2015
 @author   : NiharKhetan, Ghanshyam Malu, Xiao Liang
 @desc     : Grid world for reinforcement learning
             1. Report learned values by value iteration
-            2. Implement Q learning with initial e = 0.5
+            2. Implement Q learning with initial e = 0.9
             3. Set reward at each step to be 0. Report results. 
             
 @Usage    : Execute the python file to run the Gold Explorer
@@ -16,7 +16,7 @@ Created on Sep 20, 2015
 
 @Answer 1:
 
- 	  *********************************************************************
+ 	      *********************************************************************
                                  Grid World Value Matrix
           *********************************************************************
             |   36.067672   |   43.870462   |   63.667549   |   76.643424   |

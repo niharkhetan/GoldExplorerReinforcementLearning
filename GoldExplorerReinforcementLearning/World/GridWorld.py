@@ -1,7 +1,7 @@
 '''
 Created on Nov 3, 2015
 
-@author: NiharKhetan
+@author: NiharKhetan, Ghanshyam Malu
 '''
 from Grid import Grid
 
