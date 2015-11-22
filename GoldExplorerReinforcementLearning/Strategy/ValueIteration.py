@@ -125,12 +125,14 @@ def valueIterationMain(gWorldArg, gammaArg, printDebugStatementsFlagArg, screenW
 
     gWorld.printGridWorldRewardMatrix()           
     gWorld.printGridWorldValueMatrix()
+    gWorld.printGridWorldOptimumPolicyValueIteration()
  
     print '{:^{screenWidth}}'.format('{:=^{w}}'.format('', w = screenWidth-10), screenWidth=screenWidth)
     print '{:^{screenWidth}}'.format('{:^{w}}'.format('Thank you for using Gold Explorer Using Reinforcement Learning - Value Iteration', w = screenWidth-10), screenWidth=screenWidth)
     print '{:^{screenWidth}}'.format('{:=^{w}}'.format('', w = screenWidth-10), screenWidth=screenWidth)    
     print 
     
+
 if __name__ == '__main__':
 
      # Creating a sample world
@@ -159,4 +161,6 @@ if __name__ == '__main__':
     gWorld = GridWorld([[grid1,grid2,grid3,grid4],[grid5,grid6,grid7,grid8],[grid9,grid10,grid11,grid12],[grid13,grid14,grid15,grid16],[grid17,grid18,grid19,grid20]])
     gWorld.setMovement({"left":{"left":1}, "right":{"right":0.8, "down":0.2}, "up":{"up":0.8, "left":0.2}, "down":{"down":1}})
         
-    valueIterationMain(gWorld, 0.9, True, 90)
+    printDebugStatementsFlag = True
+    screenWidthArg = 90
+    valueIterationMain(gWorld, 0.9, printDebugStatementsFlag, screenWidthArg)

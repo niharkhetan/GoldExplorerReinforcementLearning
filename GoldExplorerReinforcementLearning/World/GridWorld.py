@@ -85,47 +85,7 @@ class GridWorld(object):
     
     def getMovement(self):
         return self.movement
-    
-    '''    
-    def getMovesPossible(self, grid):
-        #TODO: Check if this can be deleted
-        if grid.isGoal():
-            return [grid]
-        
-        movesPossible = []
-        # Moves are represented as (From, to)
-        i, j = grid.getIndex()
-        #Up, Down, Right, Left
-        movesPossibleToGrids = [(i+1,j), (i-1,j), (i,j+1), (i,j-1)]
-        for move in movesPossibleToGrids:
-            x, y = move            
-            if x < 5 and x >= 0 and y >=0 and y < 4 :
-                gridToMoveTo = self.grids[x][y]
-                if not gridToMoveTo.isBlocked():
-                    movesPossible.append(gridToMoveTo)
-        return movesPossible
-
-    def getAllMovesFromCurGrid(self,grid):
-        #TODO: Check if this can be deleted
-
-        if grid.isGoal():
-            return [grid]
-        
-        movesPossible = []
-        
-        # Moves are represented as (From, to)
-        i, j = grid.getIndex()
-        #Up, Down, Right, Left
-        movesPossibleToGrids = [(i+1,j), (i-1,j), (i,j+1), (i,j-1)]
-        for move in movesPossibleToGrids:
-            x, y = move            
-            if x < 5 and x >= 0 and y >=0 and y < 4 :
-                gridToMoveTo = self.grids[x][y]
-                if not gridToMoveTo.isBlocked():
-                    movesPossible.append(gridToMoveTo)
-        return movesPossible
-    '''        
-    
+      
     def getAllGridsReachableFromCurGrid(self,grid):
         ''' getAllGridsReachableFromCurGrid '''
 
@@ -156,8 +116,90 @@ class GridWorld(object):
             return 'down'
         else:
             return 'up'
+
+    def getDirectionString(self, dirList):
+        ''' Creates a string of direction of symbols from the given direction list '''
+
+        dirStr = ''        
+        dirDict = {
+        'up': '^',
+        'down': 'v',
+        'left': '<',
+        'right': '>'
+        }
         
+        for dir in dirList:
+            if len(dirStr)>0:
+                dirStr += ' / '
+            dirStr += dirDict[dir]
+            
+        return dirStr
+       
+    def printGridWorldOptimumPolicyValueIteration(self):
+        ''' Print the optimum policy '''
+        print        
+        print '{:^{screenWidth}}'.format('{:*^{w}}'.format('', w = 69), screenWidth=screenWidth)
+        print '{:^{screenWidth}}'.format('{:^{w}}'.format('Grid World Optimum Policy', w = 49), screenWidth=screenWidth)
+        print '{:^{screenWidth}}'.format('{:*^{w}}'.format('', w = 69), screenWidth=screenWidth)    
+                 
+        for i in range(4, -1, -1):                              
+            rowText = '' 
+            for j in range(4):
+                currGrid = self.grids[i][j]
+                if currGrid.isBlocked():
+                    rowText += '|{:^15}'.format('######')
+                else:
+                    allGridsFromCurrGrid = self.getAllGridsReachableFromCurGrid(currGrid)
+                    allGridsFromCurrGrid = [[grid.value, direction] for direction,grid in allGridsFromCurrGrid.iteritems()]
+                    m = max(allGridsFromCurrGrid)
+                    optimumDirections = [elem[1] for idx, elem in enumerate(allGridsFromCurrGrid) if elem[0] == m[0]]
+                    optimumDirStr = self.getDirectionString(optimumDirections)
+                    rowText += '|{:^15}'.format(optimumDirStr)
+                    
+                if j==3:
+                    rowText +=  "|"
+            print '{:^{screenWidth}}'.format('{:^{w}}'.format(rowText, w = 69), screenWidth=screenWidth)
+            print '{:^{screenWidth}}'.format('{:-^{w}}'.format('', w = 65), screenWidth=screenWidth)
+
+        print '{:^{screenWidth}}'.format('{:*^{w}}'.format('', w = 69), screenWidth=screenWidth)
+        print '{:^{screenWidth}}'.format('{:^{w}}'.format('^ : Up    v : Down    < : Left    > : Right     / : Or', w = 49), screenWidth=screenWidth)
+        print '{:^{screenWidth}}'.format('{:*^{w}}'.format('', w = 69), screenWidth=screenWidth)    
+        print "\n"
+
+       
+    def printGridWorldOptimumPolicyQValue(self):
+        ''' Print the optimum policy '''
+        print        
+        print '{:^{screenWidth}}'.format('{:*^{w}}'.format('', w = 69), screenWidth=screenWidth)
+        print '{:^{screenWidth}}'.format('{:^{w}}'.format('Grid World Optimum Policy', w = 49), screenWidth=screenWidth)
+        print '{:^{screenWidth}}'.format('{:*^{w}}'.format('', w = 69), screenWidth=screenWidth)    
+        for i in range(4, -1, -1):                      
+            rowText = '' 
+            for j in range(4):
+                currGrid = self.grids[i][j]
+                if currGrid.isBlocked():
+                    rowText += '|{:^15}'.format('######')
+                else:                    
+                    allQValuesCurrGrid = currGrid.getAllQValues()
+                    allQValuesCurrGrid = [[v,k] for k,v in allQValuesCurrGrid.iteritems()]
+                    m = max(allQValuesCurrGrid)
+                    optimumDirections = [elem[1] for _, elem in enumerate(allQValuesCurrGrid) if abs(elem[0] - m[0]) <= 0.05]
+                    optimumDirStr = self.getDirectionString(optimumDirections)
+                    
+                    rowText += '|{:^15}'.format(optimumDirStr)
                 
+                if j==3:
+                    rowText +=  "|"
+            
+            print '{:^{screenWidth}}'.format('{:^{w}}'.format(rowText, w = 69), screenWidth=screenWidth)
+            print '{:^{screenWidth}}'.format('{:-^{w}}'.format('', w = 65), screenWidth=screenWidth)
+            
+        print '{:^{screenWidth}}'.format('{:*^{w}}'.format('', w = 69), screenWidth=screenWidth)
+        print '{:^{screenWidth}}'.format('{:^{w}}'.format('^ : Up  v : Down  < : Left   > : Right   Diff. Threshold : (0.05)', w = 49), screenWidth=screenWidth)
+        print '{:^{screenWidth}}'.format('{:*^{w}}'.format('', w = 69), screenWidth=screenWidth)    
+        print "\n"
+
+                        
     def printGridWorldValueMatrix(self):
         ''' Print Grid World Value Matrix'''
         
@@ -239,6 +281,8 @@ if __name__ == '__main__':
 #                 
     gWorld.getAllGridsReachableFromCurGrid(grid17)
     gWorld.printGridWorldValueMatrix()
+#     gWorld.printGridWorldOptimumPolicyValueIteration()
+    gWorld.printGridWorldOptimumPolicyQValue()
 #     gWorld.printGridWorldRewardMatrix()
 # 
 #     print "getUpGrid", gWorld.getUpGrid(grid17).getGridName()

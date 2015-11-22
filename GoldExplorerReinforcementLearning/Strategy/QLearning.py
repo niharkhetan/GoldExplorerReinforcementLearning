@@ -181,8 +181,8 @@ def qLearn():
         convergedFlag = isConverged(oldGridMatrixValue,newGridMatrixValue)
                   
         if convergedFlag == True:
-            print '\n\n{:^{screenWidth}}'.format('{:%^{w}}'.format(" Total # of iterations\t:" + str(iterationCount)+" ", w = screenWidth-20), screenWidth=screenWidth)
-            print '\n{:^{screenWidth}}\n'.format('{:%^{w}}'.format(" Total # of episodeCount\t:" + str(episodeCount)+" ", w = screenWidth-20), screenWidth=screenWidth)            
+            print '\n\n{:^{screenWidth}}'.format('{:%^{w}}'.format(" Total # of Iterations\t:" + str(iterationCount)+" ", w = screenWidth-20), screenWidth=screenWidth)
+            print '\n{:^{screenWidth}}\n'.format('{:%^{w}}'.format(" Total # of Episodes\t:" + str(episodeCount)+" ", w = screenWidth-20), screenWidth=screenWidth)            
             break
                         
 def qLearnMain(gWorldArg, gammaArg, alphaArg, epsilonArg, printDebugStatementsFlagArg, screenWidthArg):
@@ -206,12 +206,13 @@ def qLearnMain(gWorldArg, gammaArg, alphaArg, epsilonArg, printDebugStatementsFl
     qLearn()
     gWorld.printGridWorldRewardMatrix() 
     printGrids(gWorld)
+    gWorld.printGridWorldOptimumPolicyQValue()
 
     print '{:^{screenWidth}}'.format('{:=^{w}}'.format('', w = screenWidth-10), screenWidth=screenWidth)
     print '{:^{screenWidth}}'.format('{:^{w}}'.format('Thank you for using Gold Explorer Using Reinforcement Learning - Q Learning', w = screenWidth-10), screenWidth=screenWidth)
     print '{:^{screenWidth}}'.format('{:=^{w}}'.format('', w = screenWidth-10), screenWidth=screenWidth)    
     print 
-    
+
 if __name__ == '__main__':
     # Creating a sample world
     grid1 = Grid(1, -1)
@@ -240,7 +241,7 @@ if __name__ == '__main__':
     gWorld = GridWorld([[grid1,grid2,grid3,grid4],[grid5,grid6,grid7,grid8],[grid9,grid10,grid11,grid12],[grid13,grid14,grid15,grid16],[grid17,grid18,grid19,grid20]])
     gWorld.setMovement({"left":{"left":1}, "right":{"right":0.8, "down":0.2}, "up":{"up":0.8, "left":0.2}, "down":{"down":1}})
 
-    printDebugStatementsFlag = False
+    printDebugStatementsFlag = True
     screenWidthArg = 90
     
     # Q Learning Parameters
